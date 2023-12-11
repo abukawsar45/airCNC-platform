@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Container from '../../shared/Container'
 import Card from './Card';
 import Loader from '../../shared/Loader';
+import { useSearchParams } from 'react-router-dom';
 
 const Rooms = () => {
+  const [params, setParams] = useSearchParams();
+  const category = params.get('category');
   const [roomsData, setRoomsData] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -11,12 +14,25 @@ const Rooms = () => {
   
   useEffect(() => {
     setLoading(true);
-    fetch('./roomsData.json').then(res=>res.json()).then(data=>{
-      console.log(data)
-      setRoomsData(data);
-      setLoading(false);
-    }).catch(err=>console.log(err))
-  },[] )
+    fetch('./roomsData.json')
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (category) {
+          console.log(category);
+          const filtered = data.filter(room => room.category === category )
+          console.log(data);
+          console.log('ine2', filtered);
+          setRoomsData(filtered);
+        } else
+        {
+          
+        setRoomsData(data);
+        }
+        setLoading(false);
+      })
+      .catch((err) => console.log(err));
+  }, [category]);
   
   if (loading) {
     return <Loader />;
