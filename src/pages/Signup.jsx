@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { FcGoogle } from 'react-icons/fc';
 import { ImSpinner4 } from 'react-icons/im';
@@ -17,37 +17,58 @@ const Signup = () => {
        logOut,
        updateUserProfile,
   } = useContext(AuthContext);
-
+  
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from?.pathmame || '/';
+      
   // create accout with email
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const name = e.target.name.value;
+    const name = e.target.name.value;
     const email = e.target.email.value;
     const password = e.target.password.value;
-    // const photoUrl = e.target.image;
-    // console.log({name, password, photoUrl, email})
-    createUser(email, password)
-      .then((result) => {
-        console.log(result.user);
-        toast.success('Signup successfull');
-        navigate('/');
+    const image = e.target.image.files[0] ;
+    const formData = new FormData();
+    formData.append('image', image);
+    console.log(formData);
+
+    const url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_KEY}`;
+    
+    fetch(url, {
+      method: 'POST',
+      body: formData,
+    }).then(res => res.json()).then(imageData => {
+      const imageUrl= imageData.data.display_url;
+      createUser(email,password)
+        .then(result => {
+          console.log(result.user);
+          updateUserProfile(name, imageUrl)
+            .then(() => {
+              toast.success('Signup successfull');
+              navigate(from, { replace: true });
+            })
+            .catch((error) => {
+              console.log(error.message);
+              toast.error(error.message);
+              setLoading(false);
+            });
+        }).catch(err => {
+        setLoading(false)
+        console.log(err.message)
+        toast.error(err.message)
       })
-      .catch((error) => {
-        console.log(error.message);
-        toast.error(error.message);
-        setLoading(false);
-      });
+    })
   }
   
-  const navigate = useNavigate();
 
 
     const handleGoogleLogin = () => {
       signInWithGoogle()
         .then((result) => {
           console.log(result.user);
-          toast.success('Login successfull');
-          navigate('/');
+          toast.success('Signup successfull');
+          navigate(from, { replace: true });
         })
         .catch((error) => {
           console.log(error.message);

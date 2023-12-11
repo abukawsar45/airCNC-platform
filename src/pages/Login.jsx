@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { FcGoogle } from 'react-icons/fc';
 import { ImSpinner4 } from 'react-icons/im';
@@ -14,12 +14,12 @@ const Login = () => {
       setLoading,
       signIn,
       signInWithGoogle,
-      resetPassword,
-      logOut,
+      resetPassword
   } = useContext(AuthContext);
   
   const navigate = useNavigate();
-
+  const location = useLocation();
+  const from = location.state?.from?.pathname || '/';
   const emailRef = useRef();
 
 
@@ -35,7 +35,7 @@ const Login = () => {
        .then((result) => {
          console.log(result.user);
          toast.success('Login successfull');
-         navigate('/');
+        navigate(from, { replace: true });
        })
        .catch((error) => {
          console.log(error.message);
@@ -63,7 +63,7 @@ const Login = () => {
     signInWithGoogle().then(result => {
       console.log(result.user)
       toast.success("Login successfull")
-      navigate('/')
+      navigate(from, {replace: true})
     }).catch(error => {
       console.log(error.message);
       toast.error(error.message);
