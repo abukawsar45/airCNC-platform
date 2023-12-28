@@ -8,7 +8,7 @@ const DatePicker = () => {
     <DateRange
       rangeColors={['#262626']}
       date={new Date()}
-      direction='vertical'
+      // direction='vertical'
       showDateDisplay={false}
       minDate={new Date()}
     />

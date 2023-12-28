@@ -5,6 +5,7 @@ import { ImSpinner4 } from 'react-icons/im';
 import { useContext, useRef } from 'react';
 import { AuthContext } from '../providers/AuthProvider';
 import toast from 'react-hot-toast';
+import { saveUser } from '../api/auth';
 
 const Login = () => {
 
@@ -35,6 +36,7 @@ const Login = () => {
        .then((result) => {
          console.log(result.user);
          toast.success('Login successfull');
+         saveUser(result?.user);
         navigate(from, { replace: true });
        })
        .catch((error) => {
@@ -61,9 +63,11 @@ const Login = () => {
   // handle google login
   const handleGoogleLogin = () => {
     signInWithGoogle().then(result => {
-      console.log(result.user)
-      toast.success("Login successfull")
-      navigate(from, {replace: true})
+      console.log(result.user);
+      toast.success('Login successfull');
+      // save user to DB
+      saveUser(result?.user)
+      navigate(from, { replace: true });
     }).catch(error => {
       console.log(error.message);
       toast.error(error.message);

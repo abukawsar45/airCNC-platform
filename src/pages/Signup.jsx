@@ -5,6 +5,7 @@ import { ImSpinner4 } from 'react-icons/im';
 import { useContext } from 'react';
 import { AuthContext } from '../providers/AuthProvider';
 import toast from 'react-hot-toast';
+import { saveUser } from '../api/auth';
 
 const Signup = () => {
      const {
@@ -46,6 +47,8 @@ const Signup = () => {
           updateUserProfile(name, imageUrl)
             .then(() => {
               toast.success('Signup successfull');
+              // save user to DB
+              saveUser(result?.user);
               navigate(from, { replace: true });
             })
             .catch((error) => {
@@ -68,6 +71,8 @@ const Signup = () => {
         .then((result) => {
           console.log(result.user);
           toast.success('Signup successfull');
+          // save user to DB
+          saveUser(result?.user);
           navigate(from, { replace: true });
         })
         .catch((error) => {
