@@ -32,7 +32,7 @@ const Signup = () => {
     const image = e.target.image.files[0] ;
     const formData = new FormData();
     formData.append('image', image);
-    console.log(formData);
+    // console.log(formData);
 
     const url = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_KEY}`;
     
