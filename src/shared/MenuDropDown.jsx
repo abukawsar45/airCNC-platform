@@ -3,18 +3,41 @@ import Avatar from './Avatar';
 import { useCallback, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../providers/AuthProvider';
-
+import HostModal from '../components/Modal/HostRequestModal';
+import { becomeHost } from '../api/auth';
+import toast from 'react-hot-toast';
+// modalHandler, closeModal, isOpen, email
 const MenuDropdown = () => {
-  const { user, logOut } = useContext(AuthContext);
+  const { user, logOut, role } = useContext(AuthContext);
+  console.log(role)
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const modalHandler = email => {
+    becomeHost(email).then(data => {
+      console.log(data)
+      toast.success('You are HOST now, Post Rooms');
+      closeModal()
+    })
+  }
+
+  const closeModal = () => {
+    setIsOpenModal(false)
+  }
+
   const toggleOpen = useCallback(() => {
     setIsOpen((value) => !value);
   }, []);
   return (
     <div className='relative'>
       <div className='flex flex-row items-center gap-3'>
-        <div className='hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer'>
-          AirCNC your home
+        <div
+          className={`hidden md:block text-sm font-semibold py-3 px-4 rounded-full  transition ${
+            role ? 'cursor-pointer hover:bg-neutral-100' : 'text-slate-300 '
+          }`}
+        >
+         {!role && <button onClick={() => setIsOpenModal(true)} disabled={!user}>
+            AirCNC your home
+          </button>}
         </div>
         <div
           onClick={toggleOpen}
@@ -36,12 +59,20 @@ const MenuDropdown = () => {
               Home
             </Link>
             {user ? (
-              <div
-                onClick={logOut}
-                className='px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer'
-              >
-                Logout
-              </div>
+              <>
+                <div
+                  onClick={logOut}
+                  className='px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer'
+                >
+                  Logout
+                </div>
+                <Link
+                  to='/dashboard'
+                  className='px-4 py-3 hover:bg-neutral-100 transition font-semibold'
+                >
+                  Dashboard
+                </Link>
+              </>
             ) : (
               <>
                 <Link
@@ -61,6 +92,12 @@ const MenuDropdown = () => {
           </div>
         </div>
       )}
+      <HostModal
+        modalHandler={modalHandler}
+        isOpen={isOpenModal}
+        closeModal={closeModal}
+        email={user?.email}
+      />
     </div>
   );
 };
