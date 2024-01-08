@@ -8,7 +8,7 @@ import { becomeHost } from '../api/auth';
 import toast from 'react-hot-toast';
 // modalHandler, closeModal, isOpen, email
 const MenuDropdown = () => {
-  const { user, logOut, role } = useContext(AuthContext);
+  const { user, logOut, role, setRole } = useContext(AuthContext);
   console.log(role)
   const [isOpen, setIsOpen] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -16,6 +16,7 @@ const MenuDropdown = () => {
     becomeHost(email).then(data => {
       console.log(data)
       toast.success('You are HOST now, Post Rooms');
+      setRole('host')
       closeModal()
     })
   }
@@ -31,13 +32,20 @@ const MenuDropdown = () => {
     <div className='relative'>
       <div className='flex flex-row items-center gap-3'>
         <div
-          className={`hidden md:block text-sm font-semibold py-3 px-4 rounded-full  transition ${
-            role ? 'cursor-pointer hover:bg-neutral-100' : 'text-slate-300 '
-          }`}
+          className={`hidden md:block text-sm font-semibold py-3 px-8 rounded-full  transition ${
+            role
+              ? 'cursor-pointer hover:bg-neutral-100 '
+              : user
+              ? ''
+              : 'text-slate-300'
+          }
+ `}
         >
-         {!role && <button onClick={() => setIsOpenModal(true)} disabled={!user}>
-            AirCNC your home
-          </button>}
+          {!role && (
+            <button onClick={() => setIsOpenModal(true)} disabled={!user}>
+              AirCNC your home
+            </button>
+          )}
         </div>
         <div
           onClick={toggleOpen}
@@ -51,7 +59,7 @@ const MenuDropdown = () => {
       </div>
       {isOpen && (
         <div className='absolute rounded-xl shadow-md w-[40vw] md:w-3/4 bg-white overflow-hidden right-0 top-12 text-sm'>
-          <div className='flex flex-col cursor-pointer'>
+          <div className='flex flex-col cursor-pointer '>
             <Link
               to='/'
               className='block md:hidden px-4 py-3 hover:bg-neutral-100 transition font-semibold'
@@ -61,7 +69,10 @@ const MenuDropdown = () => {
             {user ? (
               <>
                 <div
-                  onClick={logOut}
+                  onClick={() => {
+                    setRole(null);
+                    logOut();
+                  }}
                   className='px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer'
                 >
                   Logout
