@@ -4,6 +4,9 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '../../providers/AuthProvider';
 import BookingModal from '../Modal/BookingModal';
 import { formatDistance } from 'date-fns';
+import { addBooking } from '../../api/bookings';
+import toast from 'react-hot-toast';
+
 
 const RoomReservation = ({ roomData }) => {
   const { user, role, setRole } = useContext(AuthContext);
@@ -24,7 +27,8 @@ const RoomReservation = ({ roomData }) => {
 
   // booking state
   const [bookingInfo, setBookingInfo] = useState({
-    guest: {name: user?.displayName, email: user?.email, image: user?.photoURL },
+    guest: { name: user?.displayName, email: user?.email, image: user?.photoURL },
+    title: roomData.title,
     host: roomData?.host?.email,
     location: roomData?.location,
     price: totalPrice,
@@ -40,7 +44,16 @@ const RoomReservation = ({ roomData }) => {
 
 
   const modalHandler = () => {
-    console.log('booking reserve btn')
+    // console.log(bookingInfo)
+    // console.log('booking reserve btn')
+    addBooking(bookingInfo).then(data => {
+      console.log(data)
+      toast.success('Booking successful')
+      closeModal()
+    }).catch(err => {
+      console.log(err)
+      closeModal();
+    })
   };
 
   const closeModal = () => {

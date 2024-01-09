@@ -4,7 +4,7 @@ import { Fragment } from 'react';
 
 const BookingModal = ({ modalHandler, closeModal, isOpen, bookingInfo }) => {
   console.log(bookingInfo)
-  
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as='div' className='relative z-10' onClose={closeModal}>
@@ -50,7 +50,7 @@ const BookingModal = ({ modalHandler, closeModal, isOpen, bookingInfo }) => {
                 </div>
                 <div className='mt-2'>
                   <p className='text-sm text-gray-500'>
-                    Guest: {bookingInfo.guest.displayName}
+                    Guest: {bookingInfo.guest.name}
                   </p>
                 </div>
                 <div className='mt-2'>
