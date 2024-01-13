@@ -4,13 +4,15 @@ import { useContext, useState } from 'react';
 import { AuthContext } from '../../providers/AuthProvider';
 import BookingModal from '../Modal/BookingModal';
 import { formatDistance } from 'date-fns';
-import { addBooking } from '../../api/bookings';
+import { addBooking, updateStatus } from '../../api/bookings';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 
 const RoomReservation = ({ roomData }) => {
   const { user, role, setRole } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   // price calculation
   const totalPrice = parseFloat(
@@ -33,7 +35,10 @@ const RoomReservation = ({ roomData }) => {
     location: roomData?.location,
     price: totalPrice,
     to: value?.endDate,
-    from: value?.startDate
+    from: value?.startDate,
+    roomId: roomData?._id,
+    image: roomData?.image
+    
 
   });
 
@@ -48,8 +53,12 @@ const RoomReservation = ({ roomData }) => {
     // console.log('booking reserve btn')
     addBooking(bookingInfo).then(data => {
       console.log(data)
-      toast.success('Booking successful')
-      closeModal()
+      updateStatus(roomData?._id, true).then(data => {
+        console.log(data)
+        toast.success('Booking successful')
+        navigate('/dashboard/my-bookings')
+        closeModal()
+      })
     }).catch(err => {
       console.log(err)
       closeModal();
@@ -74,7 +83,7 @@ const RoomReservation = ({ roomData }) => {
       <div className='p-4'>
         <Button
           onClick={() => setIsOpen(true)}
-          disabled={roomData?.host?.email === user?.email}
+          disabled={roomData?.host?.email === user?.email || roomData?.booked }
           label='Reserve'
         />
       </div>
