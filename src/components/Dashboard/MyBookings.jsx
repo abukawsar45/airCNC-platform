@@ -65,7 +65,7 @@ const MyBookings = () => {
                   </th>
                 </tr>
               </thead>
-              <tbody>{bookings && bookings.map(booking=><TableRow key={booking?._id} booking={booking} fetchBooking={fetchBookings} />)}</tbody>
+              <tbody>{bookings && bookings.map(booking=><TableRow key={booking?._id} booking={booking} fetchBookings={fetchBookings} />)}</tbody>
             </table>
           </div>
         </div>

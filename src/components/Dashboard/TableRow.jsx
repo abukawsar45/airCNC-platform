@@ -1,6 +1,25 @@
 import { format } from 'date-fns';
+import { useState } from 'react';
+import DeleteModal from '../Modal/DeleteModal';
+import { deleteBooking, updateStatus } from '../../api/bookings';
+import toast from 'react-hot-toast';
 
-const TableRow = ({ booking }) => {
+const TableRow = ({ booking, fetchBookings }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const closeModal = () => {
+    setIsOpen(false);
+  };
+  const modalHandler = (id) => {
+    deleteBooking(id).then((data) => {
+      console.log(data);
+      updateStatus(booking?.roomId, false).then((data) => {
+        console.log(data);
+        fetchBookings();
+        toast.success('Booking Canceled');
+      });
+    });
+    closeModal()
+  };
   return (
     <tr>
       <td className='px-5 py-5 border-b border-gray-200 bg-white text-sm'>
@@ -8,6 +27,7 @@ const TableRow = ({ booking }) => {
           <div className='flex-shrink-0'>
             <div className='block relative'>
               <img
+                title={booking?.title}
                 alt='profile'
                 src={booking?.image}
                 className='mx-auto object-cover rounded h-10 w-15 '
@@ -15,7 +35,14 @@ const TableRow = ({ booking }) => {
             </div>
           </div>
           <div className='ml-3'>
-            <p className='text-gray-900 whitespace-no-wrap'>{booking?.title}</p>
+            <p
+              title={booking?.title.length > 20 && booking?.title}
+              className='text-gray-900 whitespace-no-wrap'
+            >
+              {booking?.title.length > 20
+                ? booking?.title.slice(0, 10) + '...'
+                : booking?.title}
+            </p>
           </div>
         </div>
       </td>
@@ -41,8 +68,16 @@ const TableRow = ({ booking }) => {
             aria-hidden='true'
             className='absolute inset-0 bg-red-200 opacity-50 rounded-full'
           ></span>
-          <span className='relative'>Cancel</span>
+          <span onClick={() => setIsOpen(true)} className='relative'>
+            Cancel
+          </span>
         </span>
+        <DeleteModal
+          modalHandler={modalHandler}
+          closeModal={closeModal}
+          isOpen={isOpen}
+          id={booking?._id}
+        />
       </td>
     </tr>
   );
