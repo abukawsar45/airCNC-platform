@@ -7,10 +7,11 @@ import { AiOutlineBars } from 'react-icons/ai';
 import { BsFillHouseAddFill } from 'react-icons/bs';
 import Logo from '../../shared/Logo';
 import GuestMenu from './GuestMenu';
+import HostMenu from './HostMenu';
 const Sidebar = () => {
   const navigate = useNavigate();
   const [toggle, setToggle] = useState(false);
-  const { user, logOut } = useContext(AuthContext);
+  const { user, logOut, role } = useContext(AuthContext);
 
   const [isActive, setActive] = useState('false');
   const toggleHandler = (event) => {
@@ -78,7 +79,7 @@ const Sidebar = () => {
           {/* Nav Items */}
           <div className='flex flex-col justify-between flex-1 mt-6'>
             <nav>
-              <>
+           {role && role==='host'?   <>
                 <label
                   htmlFor='Toggle3'
                   className='inline-flex w-full justify-center items-center px-2 rounded-md cursor-pointer text-gray-800'
@@ -96,9 +97,9 @@ const Sidebar = () => {
                     Host
                   </span>
                 </label>
-                {/* Menu Links */}
-               <GuestMenu/>
-              </>
+                {/* Menu links */}
+                {toggle? <HostMenu/>: <GuestMenu/>}
+              </>:<GuestMenu/>}
             </nav>
           </div>
         </div>

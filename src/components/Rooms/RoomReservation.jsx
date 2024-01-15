@@ -17,7 +17,7 @@ const RoomReservation = ({ roomData }) => {
   // price calculation
   const totalPrice = parseFloat(
     formatDistance(new Date(roomData.to), new Date(roomData.from)).split(' ')[0] 
-  ) * roomData?.price ;
+  ) || 1 * roomData?.price ;
 
   console.log(totalPrice)
 
@@ -33,7 +33,7 @@ const RoomReservation = ({ roomData }) => {
     title: roomData.title,
     host: roomData?.host?.email,
     location: roomData?.location,
-    price: totalPrice,
+    price: totalPrice ,
     to: value?.endDate,
     from: value?.startDate,
     roomId: roomData?._id,
@@ -90,13 +90,13 @@ const RoomReservation = ({ roomData }) => {
       <hr />
       <div className='p-4 flex flex-row items-center justify-between font-semibold text-lg'>
         <div>Total</div>
-        <div>$ {totalPrice || roomData?.price}</div>
+        <div>$ {totalPrice }</div>
       </div>
       <BookingModal
         modalHandler={modalHandler}
         closeModal={closeModal}
         isOpen={isOpen}
-        bookingInfo={bookingInfo}
+        bookingInfo={bookingInfo  }
       />
     </div>
   );
