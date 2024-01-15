@@ -50,6 +50,10 @@ export const router = createBrowserRouter([
     ),
     children: [
       {
+        path: '',
+        element: <MyBookings />,
+      },
+      {
         path: 'add-room',
         element: <AddRoom />,
       },
